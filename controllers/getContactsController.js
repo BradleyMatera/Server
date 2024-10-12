@@ -1,36 +1,27 @@
-const mongoose = require('mongoose');
+const api = require('../utils/axiosInstance');
 const Contact = require('../models/contactModel');
-const { paginateContacts, sortContacts } = require('../utils/helpers');
 
 const getContacts = async (req, res) => {
   try {
-    console.log('Request received. Fetching all contacts...');
-    
-    // Extract sorting, pagination, and filtering parameters from query string
+    console.log('Fetching contacts...');
     const { sort = 'lname', direction = 'asc', page = 1, limit = 10 } = req.query;
-
-    // Ensure page and limit are numbers
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
-
-    // Fetch contacts with pagination and sorting from the database
+    
     const contacts = await Contact.find()
-      .sort({ [sort]: direction === 'asc' ? 1 : -1 })  // Sorting by field in either ascending or descending order
-      .skip((pageNum - 1) * limitNum)  // Skipping documents for pagination
-      .limit(limitNum);  // Limiting number of contacts returned per page
+      .sort({ [sort]: direction === 'asc' ? 1 : -1 })  // Apply sorting
+      .skip((page - 1) * limit)
+      .limit(limit);  // Apply pagination
 
-    // Get the total number of contacts for pagination calculations
-    const totalContacts = await Contact.countDocuments();
-    const totalPages = Math.ceil(totalContacts / limitNum);
-    const currentPage = pageNum;
+    if (!contacts || contacts.length === 0) {
+      return res.status(404).json({ error: 'No contacts found' });
+    }
 
-    console.log(`Returning ${contacts.length} contacts out of ${totalContacts} (page ${currentPage}/${totalPages})`);
+    const totalContacts = await Contact.countDocuments();  // Get total count for pagination
+    const totalPages = Math.ceil(totalContacts / limit);
 
-    // Return paginated, sorted contacts along with pagination details
     res.json({
       contacts,
       totalPages,
-      currentPage,
+      currentPage: page,
       totalContacts,
     });
   } catch (error) {

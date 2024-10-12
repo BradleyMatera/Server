@@ -1,3 +1,4 @@
+// utils/errors.js
 class ApiTestingError extends Error {
   constructor(message) {
     super(message);

@@ -1,23 +1,21 @@
-const mongoose = require('mongoose');
 const Contact = require('../models/contactModel');
+const { validateContactData } = require('../utils/validationHelpers');
 
 const createContact = async (req, res) => {
+  const contactData = req.body;
+
   try {
-    console.log('Request received. Creating new contact...');
-    const { fname, lname, email, phone, birthday } = req.body;
+    validateContactData(contactData);  // Custom validation function
 
-    // Check if email already exists
-    const existingContact = await Contact.findOne({ email });
-    if (existingContact) {
-      return res.status(400).json({ error: 'A contact with this email already exists.' });
-    }
-
-    const newContact = new Contact({ fname, lname, email, phone, birthday });
+    const newContact = new Contact(contactData);
     await newContact.save();
-    console.log('Successfully created a new contact.');
-    res.status(201).json(newContact); // Use status code 201 for successful creation
+
+    res.status(201).json(newContact);
   } catch (error) {
     console.error('Error creating contact:', error.message);
+    if (error.code === 11000) {
+      return res.status(400).json({ error: 'A contact with this email already exists' });
+    }
     res.status(500).json({ error: 'Error creating contact' });
   }
 };

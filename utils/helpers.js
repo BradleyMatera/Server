@@ -1,3 +1,4 @@
+// utils/helpers.js
 // Sorting logic
 const sortContacts = (contacts, sortBy = 'lname', direction = 'asc') => {
   return contacts.sort((a, b) => {

@@ -1,3 +1,4 @@
+// models/contactValidation.js
 const { InvalidContactSchemaError } = require('../utils/errors');
 
 // Validate contact data beyond the schema rules

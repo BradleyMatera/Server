@@ -1,26 +1,23 @@
-const mongoose = require('mongoose');
 const Contact = require('../models/contactModel');
-const { ApiTestingError } = require('../utils/errors'); // Import custom error
+const { validateContactData } = require('../utils/validationHelpers');
 
 const updateContact = async (req, res) => {
+  const { id } = req.params;
+  const contactData = req.body;
+
   try {
-    const { id } = req.params;
+    validateContactData(contactData);  // Validate the incoming data
 
-    // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new ApiTestingError(`Invalid ObjectId: ${id}`);
-    }
-
-    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedContact = await Contact.findByIdAndUpdate(id, contactData, { new: true });
 
     if (!updatedContact) {
-      return res.status(404).json({ error: 'Contact not found' });
+      return res.status(404).json({ error: `Contact with ID ${id} not found` });
     }
 
     res.json(updatedContact);
   } catch (error) {
-    console.error(`Error updating contact with ID: ${id}`, error.message);
-    res.status(400).json({ error: error.message });
+    console.error(`Error updating contact with ID ${id}:`, error.message);
+    res.status(500).json({ error: `Error updating contact with ID ${id}` });
   }
 };
 

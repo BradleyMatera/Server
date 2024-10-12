@@ -1,3 +1,4 @@
+// models/contactSchema.js
 const mongoose = require('mongoose');
 
 // Define the contact schema with validation and constraints
