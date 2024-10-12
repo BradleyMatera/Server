@@ -1,7 +1,6 @@
-// models/contactSchema.js
 const mongoose = require('mongoose');
 
-// Define the contact schema
+// Define the contact schema with validation and constraints
 const contactSchema = new mongoose.Schema({
   fname: {
     type: String,
@@ -17,7 +16,7 @@ const contactSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Email is required'],
     unique: true,
-    match: [/\S+@\S+\.\S+/, 'Please use a valid email address'],
+    match: [/\S+@\S+\.\S+/, 'Please provide a valid email address'],
   },
   phone: {
     type: String,
@@ -29,9 +28,11 @@ const contactSchema = new mongoose.Schema({
     required: [true, 'Birthday is required'],
     validate: {
       validator: (v) => v instanceof Date && !isNaN(v),
-      message: 'Invalid birthday format',
+      message: 'Invalid date format for birthday',
     },
   },
-}, { timestamps: true });  // Automatically creates `createdAt` and `updatedAt` fields
+}, { 
+  timestamps: true, // Automatically create `createdAt` and `updatedAt` fields
+});
 
 module.exports = contactSchema;

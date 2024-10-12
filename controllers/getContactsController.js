@@ -1,36 +1,42 @@
-// controllers/getContactsController.js
-const ContactModel = require('../models/contactModel');
+const mongoose = require('mongoose');
+const Contact = require('../models/contactModel');
 const { paginateContacts, sortContacts } = require('../utils/helpers');
-const formatContact = require('../utils/formatContact');
 
 const getContacts = async (req, res) => {
   try {
-    console.log('Starting to fetch contacts from database...');
-    // Fetch contacts from the database
-    const contacts = await ContactModel.find();
+    console.log('Request received. Fetching all contacts...');
     
-    // Log the contacts retrieved from the database
-    console.log('Contacts fetched successfully:', contacts);
-    
-    // Format contacts before sending the response
-    const formattedContacts = contacts.map(formatContact);
+    // Extract sorting, pagination, and filtering parameters from query string
+    const { sort = 'lname', direction = 'asc', page = 1, limit = 10 } = req.query;
 
-    // Send the formatted contacts as the response
-    res.json(formattedContacts);
+    // Ensure page and limit are numbers
+    const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
+
+    // Fetch contacts with pagination and sorting from the database
+    const contacts = await Contact.find()
+      .sort({ [sort]: direction === 'asc' ? 1 : -1 })  // Sorting by field in either ascending or descending order
+      .skip((pageNum - 1) * limitNum)  // Skipping documents for pagination
+      .limit(limitNum);  // Limiting number of contacts returned per page
+
+    // Get the total number of contacts for pagination calculations
+    const totalContacts = await Contact.countDocuments();
+    const totalPages = Math.ceil(totalContacts / limitNum);
+    const currentPage = pageNum;
+
+    console.log(`Returning ${contacts.length} contacts out of ${totalContacts} (page ${currentPage}/${totalPages})`);
+
+    // Return paginated, sorted contacts along with pagination details
+    res.json({
+      contacts,
+      totalPages,
+      currentPage,
+      totalContacts,
+    });
   } catch (error) {
-    console.error('Detailed error fetching contacts:', error.message);
+    console.error('Error fetching contacts:', error.message);
     res.status(500).json({ error: 'Error fetching contacts' });
   }
 };
-
-// Meta information about the getContacts function (optional, if used in some documentation tool)
-getContacts.handleName = 'getContacts';
-getContacts.handleType = 'api';
-getContacts.handleDescription = 'Get a list of contacts';
-getContacts.handleFunctionType = 'api';
-getContacts.handleFunctionName = 'getContacts';
-getContacts.handleFunction = 'get';
-getContacts.handleRoute = '/contacts';
-getContacts.handleMethod = 'get';
 
 module.exports = getContacts;

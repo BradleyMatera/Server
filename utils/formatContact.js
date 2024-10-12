@@ -1,6 +1,5 @@
-// utils/formatContact.js
 const formatContact = (contact) => ({
-  id: contact._id ? contact._id.toString() : '',
+  id: contact._id ? contact._id.toString() : '',  // Ensure _id is converted to id
   fname: contact.fname || '',
   lname: contact.lname || '',
   email: contact.email || '',

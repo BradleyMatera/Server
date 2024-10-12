@@ -1,41 +1,27 @@
-// utils/helpers.js
-
-const paginateContacts = (contacts, page = 1, limit = 10) => {
-  const totalContacts = contacts.length;
-  const totalPages = Math.ceil(totalContacts / limit);
-
-  if (page > totalPages) {
-    throw new PaginationResultCountError(`Requested page ${page} exceeds total pages ${totalPages}.`);
-  }
-
-  const startIndex = (page - 1) * limit;
-  const paginatedContacts = contacts.slice(startIndex, startIndex + limit);
-
-  return {
-    paginatedContacts,
-    totalPages,
-  };
-};
-
+// Sorting logic
 const sortContacts = (contacts, sortBy = 'lname', direction = 'asc') => {
-  const validSortFields = ['id', 'fname', 'lname', 'email', 'phone', 'birthday'];
-  if (!validSortFields.includes(sortBy)) {
-    throw new InvalidContactSchemaError(`${sortBy} is not a valid sort field.`);
-  }
-
   return contacts.sort((a, b) => {
-    const valA = a[sortBy].toString().toLowerCase();
-    const valB = b[sortBy].toString().toLowerCase();
-
-    if (direction === 'desc') {
-      return valA < valB ? 1 : -1;
+    const fieldA = a[sortBy]?.toLowerCase() || ''; // Ensure field exists and convert to lowercase
+    const fieldB = b[sortBy]?.toLowerCase() || '';
+    if (direction === 'asc') {
+      return fieldA.localeCompare(fieldB);
     } else {
-      return valA > valB ? 1 : -1;
+      return fieldB.localeCompare(fieldA);
     }
   });
 };
 
-module.exports = {
-  paginateContacts,
-  sortContacts,
+// Pagination logic
+const paginateContacts = (contacts, page = 1, limit = 10) => {
+  const totalContacts = contacts.length;
+  const totalPages = Math.ceil(totalContacts / limit);
+  const currentPage = Math.min(Math.max(page, 1), totalPages); // Ensure page is within bounds
+  const start = (currentPage - 1) * limit;
+  const end = currentPage * limit;
+
+  const paginatedContacts = contacts.slice(start, end);
+
+  return { paginatedContacts, totalPages, currentPage, totalContacts };
 };
+
+module.exports = { paginateContacts, sortContacts };

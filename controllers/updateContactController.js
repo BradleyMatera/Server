@@ -1,31 +1,26 @@
-// controllers/updateContactController.js
-const ContactModel = require('../models/contactModel');
-const { validateContactData } = require('../utils/validation');
-const { ContactNotFoundError, InvalidContactSchemaError } = require('../utils/errors');
-const formatContact = require('../utils/formatContact');
+const mongoose = require('mongoose');
+const Contact = require('../models/contactModel');
+const { ApiTestingError } = require('../utils/errors'); // Import custom error
 
 const updateContact = async (req, res) => {
   try {
-    const contact = await ContactModel.findById(req.params.id);
-    if (!contact) {
-      throw new ContactNotFoundError(`Contact with ID ${req.params.id} not found`);
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ApiTestingError(`Invalid ObjectId: ${id}`);
     }
 
-    validateContactData(req.body);
+    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
 
-    const updatedContact = await ContactModel.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    res.json(formatContact(updatedContact));
+    if (!updatedContact) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
+
+    res.json(updatedContact);
   } catch (error) {
-    if (
-      error instanceof InvalidContactSchemaError ||
-      error instanceof ContactNotFoundError
-    ) {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Error updating contact' });
-    }
+    console.error(`Error updating contact with ID: ${id}`, error.message);
+    res.status(400).json({ error: error.message });
   }
 };
 

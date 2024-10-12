@@ -1,20 +1,26 @@
-// controllers/deleteContactController.js
-const ContactModel = require('../models/contactModel');
-const { ContactNotFoundError } = require('../utils/errors');
+const mongoose = require('mongoose');
+const Contact = require('../models/contactModel');
+const { ApiTestingError } = require('../utils/errors'); // Import custom error
 
 const deleteContact = async (req, res) => {
   try {
-    const contact = await ContactModel.findByIdAndDelete(req.params.id);
-    if (!contact) {
-      throw new ContactNotFoundError(`Contact with ID ${req.params.id} not found`);
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ApiTestingError(`Invalid ObjectId: ${id}`);
     }
-    res.status(204).end();
+
+    const deletedContact = await Contact.findByIdAndDelete(id);
+
+    if (!deletedContact) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
+
+    res.json({ message: 'Contact deleted successfully' });
   } catch (error) {
-    if (error instanceof ContactNotFoundError) {
-      res.status(404).json({ message: error.message });
-    } else {
-      res.status(500).json({ error: 'Error deleting contact' });
-    }
+    console.error(`Error deleting contact with ID: ${id}`, error.message);
+    res.status(400).json({ error: error.message });
   }
 };
 

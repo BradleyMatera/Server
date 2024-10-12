@@ -1,21 +1,25 @@
-// controllers/getContactByIdController.js
-const ContactModel = require('../models/contactModel');
-const { ContactNotFoundError } = require('../utils/errors');
-const formatContact = require('../utils/formatContact');
+const mongoose = require('mongoose');
+const Contact = require('../models/contactModel');
+const { ApiTestingError } = require('../utils/errors'); // Import custom error
 
 const getContactById = async (req, res) => {
   try {
-    const contact = await ContactModel.findById(req.params.id);
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ApiTestingError(`Invalid ObjectId: ${id}`);
+    }
+
+    const contact = await Contact.findById(id);
     if (!contact) {
-      throw new ContactNotFoundError(`Contact with ID ${req.params.id} not found`);
+      return res.status(404).json({ error: 'Contact not found' });
     }
-    res.json(formatContact(contact));
+
+    res.json(contact);
   } catch (error) {
-    if (error instanceof ContactNotFoundError) {
-      res.status(404).json({ message: error.message });
-    } else {
-      res.status(500).json({ error: 'Error fetching contact by ID' });
-    }
+    console.error(`Error fetching contact by ID: ${id}`, error.message);
+    res.status(400).json({ error: error.message });
   }
 };
 

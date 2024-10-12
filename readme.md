@@ -1,49 +1,42 @@
-# **RESTful Routes Assignment - Detailed Analysis**
+Updated RESTful Routes Assignment - Detailed Analysis
 
-## **Assignment Overview**
+Assignment Overview
 
-This assignment required building a fully RESTful API using ExpressJS. The API manages a list of contacts and supports CRUD (Create, Read, Update, Delete) operations. In addition to basic CRUD, I was tasked with implementing advanced features like pagination, filtering, and sorting.
+This assignment required building a fully RESTful API using ExpressJS and MongoDB. The API manages a list of contacts and supports CRUD (Create, Read, Update, Delete) operations, along with additional features like pagination, sorting, and filtering.
 
-The goal is to ensure the API adheres to specific standards, with features tested through an automated test suite. This report documents the current status, challenges, and the troubleshooting efforts undertaken.
+The goal was to ensure the API adhered to specific standards, with features tested through an automated test suite. This updated report documents the current status, challenges, and the troubleshooting efforts undertaken, incorporating recent changes to improve the functionality and test results.
 
----
+Current Status:
 
-## **Current Status:**
-As of now, the API is **partially functional**. While the core API works manually via Postman, the **automated tests** reveal several issues. Below is a detailed breakdown of where the tests are failing, what I have done to troubleshoot, and the persistent issues.
+The API is now closer to being fully functional, with significant progress made based on previous errors. However, several tests are still failing, particularly those related to schema validation, pagination, and CRUD operations. Below is a breakdown of the tests, troubleshooting efforts, and ongoing issues.
 
----
+Test Breakdown
 
-## **Test Breakdown**
+1. Server and Basic JSON Structure
 
-### **1. Server and Basic JSON Structure**
+	•	Test Results:
+	•	✅ Server is reachable over port 8080.
+	•	✅ API resource /v1/contacts exists and returns 2xx response.
+	•	✅ API returns a valid JSON response.
+	•	✅ Contacts resource returns an array of objects.
+	•	✅ At least one contact is returned in the response.
+	•	Troubleshooting Efforts:
+	•	These tests are passing consistently. The core API structure works as expected, including server availability, JSON formatting, and resource retrieval.
 
-- **Test Results:**
-  - ✅ **Server is reachable over port 8080.**
-  - ✅ **API resource `/v1/contacts` exists and returns 2xx response.**
-  - ✅ **API returns a valid JSON response.**
-  - ✅ **Contacts resource returns an array of objects.**
-  - ✅ **At least one contact is returned in the response.**
+2. Schema Validation
 
-- **Troubleshooting Efforts:**
-  - No issues encountered in this section. The basic structure and functionality of the API are working as expected.
+	•	Test Result:
+	•	❌ Returned contacts all use the proper schema fields (id, fname, lname, email, phone, birthday).
+	•	Error:
 
----
+InvalidContactSchemaError: One or more contacts returned in your contacts API resource did not contain a valid contact schema.
 
-### **2. Schema Validation**
-
-- **Test Result:**
-  - ❌ **Returned contacts all use the proper schema fields** (`id`, `fname`, `lname`, `email`, `phone`, `birthday`).
-
-- **Error:**
-  ```bash
-  InvalidContactSchemaError: One or more contacts returned in your contacts API resource did not contain a valid contact schema.
 
 	•	What I Tried:
-	•	Schema Verification: I verified that all required fields are included in the returned contacts.
-	•	Logging: Added logging to confirm that contacts returned include the correct fields.
-	•	Manual Testing: Checked the output via Postman; schema appeared correct.
+	•	MongoDB to JSON Virtual ID Handling: MongoDB uses _id, but the tests expect id. A virtual id field was added to the schema using Mongoose’s virtual property to ensure the id is available in the response.
+	•	Schema Validation Enhancements: Added additional schema validation checks in the contactValidation.js file to ensure every contact follows the correct structure.
 	•	Ongoing Issue:
-	•	Despite the schema being correct in manual tests, the automated tests still fail. This could be due to differences in how the id field is handled between the test suite and MongoDB’s generated IDs.
+	•	Even with the virtual id field in place, the automated tests still fail. Manual tests via Postman return the expected schema, indicating a possible issue with how the test suite verifies the id field.
 
 3. Pagination
 
@@ -51,22 +44,15 @@ As of now, the API is **partially functional**. While the core API works manuall
 	•	❌ Pagination works with default parameters.
 	•	❌ Pagination works without default parameters.
 	•	Errors:
-	•	Default Pagination:
 
 TypeError: PaginationResultCountError is not a constructor
 
 
-	•	Custom Pagination:
-
-AxiosError: Request failed with status code 500.
-
-
 	•	What I Tried:
-	•	Implemented Pagination: Default limit set to 10 contacts, with custom pagination handled via query parameters (page, limit).
-	•	Manual Testing: Verified that pagination works as expected in Postman.
-	•	Error Handling: Investigated parsing issues but found no significant errors in the pagination logic.
+	•	PaginateContacts Helper: Implemented a helper function to handle pagination, defaulting to 10 contacts if no pagination parameters are provided.
+	•	Manual Testing: Verified that pagination works in Postman using different page and limit values.
 	•	Ongoing Issue:
-	•	The tests fail even though the pagination works when manually tested. This could be an issue with the test’s hardcoded expectations or a difference in handling pagination logic.
+	•	The test suite’s pagination expectations might be hardcoded to return exactly 10 contacts, which could be causing issues when fewer contacts are present in the database. The PaginationResultCountError is now properly caught, but test failures persist.
 
 4. Sorting
 
@@ -78,10 +64,10 @@ Expected id: 35, but received id: "67096dd4d9e4df87a18dba19".
 
 
 	•	What I Tried:
-	•	Implemented Sorting Logic: Sorting by lname and fname works manually when tested.
-	•	Checked ID Format: MongoDB uses string-based IDs, while the test expects numeric IDs (e.g., 35).
+	•	Sorting Logic in Helpers: Sorting is handled in the sortContacts function, which sorts by lname by default and also accepts other fields like fname.
+	•	ID Handling: MongoDB’s ObjectIDs are strings, while the test suite seems to expect numeric IDs.
 	•	Ongoing Issue:
-	•	The test suite expects hardcoded numeric IDs, but MongoDB generates string-based IDs. This discrepancy causes the sorting test to fail, even though the sorting functionality is correct.
+	•	The mismatch between the test suite’s hardcoded ID expectations and MongoDB’s string-based IDs remains a problem. While the sorting functionality works when manually tested, the tests expect a different ID format, causing them to fail.
 
 5. Filtering
 
@@ -93,43 +79,54 @@ AxiosError: Request failed with status code 500.
 
 
 	•	What I Tried:
-	•	Implemented Filtering Logic: Filters based on lname, birthday, etc., using custom HTTP headers (X-Filter-By, X-Filter-Operator, X-Filter-Value).
-	•	Manual Testing: Verified that filtering works in Postman, returning correct results.
-	•	Error Logging: Captured headers and verified that the filtering logic is correctly applied.
+	•	Filter Logic: Filters based on fields like lname and birthday were implemented, using query parameters instead of custom headers to match the API specification.
+	•	Manual Testing: Filtering works correctly when tested via Postman, returning filtered results as expected.
 	•	Ongoing Issue:
-	•	Filtering works manually, but the test suite returns a 500 error, indicating that the headers may not be passed or processed correctly in the test environment.
+	•	The test suite fails to pass the filtering parameters correctly, resulting in a 500 status code. This may indicate that the test environment isn’t sending the expected filter criteria or that the filter logic isn’t being applied correctly in the test environment.
 
 6. CRUD Operations
 
 	•	Test Results:
 	•	❌ Create a new contact.
-	•	Error: Expected status code 303, but received 500.
-	•	Timeout: Exceeded timeout of 5000 ms.
 	•	❌ Show a specific contact by its identifier.
-	•	Error: Request failed with status code 500.
 	•	❌ Update a specific contact by its identifier.
-	•	Error: Request failed with status code 500.
+	•	Errors:
+
+AxiosError: Request failed with status code 500.
+
+
 	•	What I Tried:
-	•	Manual CRUD Operations: All CRUD operations (Create, Read, Update, Delete) work when manually tested in Postman.
-	•	Timeout Investigation: Increased timeout for the test, but it still fails due to a mismatch between expected and actual status codes (303 vs 500).
+	•	CRUD Functionality: All CRUD operations were tested manually in Postman and worked as expected, including creating, reading, updating, and deleting contacts.
+	•	ObjectId Validation: Added mongoose.Types.ObjectId.isValid(id) checks in the controller logic to ensure that valid MongoDB ObjectIDs are used in operations.
+	•	Improved Error Handling: Ensured that errors like invalid ObjectIDs or missing fields are properly caught and returned with a 400 status code, instead of the generic 500 error.
 	•	Ongoing Issue:
-	•	The tests fail due to internal server errors and mismatched status codes. The operations work when manually tested, but the automated test suite does not recognize successful operations.
+	•	While the manual tests are successful, the automated tests still fail due to internal server errors or mismatched status codes. The tests expect specific status codes (303 for creation) that differ from what the API returns (usually 200 or 201 for successful operations).
 
-Summary of Issues & Next Steps
+Summary of Persistent Issues
 
-Summary of Persistent Issues:
+1. Schema Validation Failure
 
-	•	Schema Validation Failure: Although fields appear correct in manual tests, the test suite continues to throw schema errors.
-	•	Pagination, Sorting, and Filtering Failures: Even though these features work manually, they fail during automated testing due to mismatched expectations and internal server errors.
-	•	CRUD Operation Failures: CRUD operations work manually, but fail in the test environment due to errors and timeouts.
+	•	The id field returned by MongoDB (as _id) is correctly mapped to id using virtuals, but the test suite continues to fail, potentially due to test environment issues or stricter expectations for field handling.
+
+2. Pagination, Sorting, and Filtering
+
+	•	Although these features work manually, they fail in the test suite due to mismatches in ID formatting, hardcoded expectations, or improperly passed parameters.
+
+3. CRUD Operation Failures
+
+	•	CRUD operations work manually, but the tests fail due to internal server errors, timeouts, or mismatched status codes.
 
 Next Steps:
 
-	1.	Investigate MongoDB vs Test Suite ID Handling: Look into how MongoDB-generated IDs (strings) are causing issues with hardcoded numeric IDs in the test suite.
-	2.	Examine Filtering Headers in the Test Environment: Further investigate why the test suite fails to pass custom filtering headers.
-	3.	Review Pagination Logic for Edge Cases: Ensure that pagination logic is handling defaults and custom parameters as expected.
-	4.	Resolve CRUD Operation Status Code Mismatches: Investigate why the API is returning 500 errors during automated CRUD tests but works manually.
+	1.	Investigate MongoDB vs Test Suite ID Handling:
+	•	Look into how MongoDB-generated IDs (strings) are causing issues with hardcoded numeric IDs in the test suite.
+	2.	Examine Filtering in the Test Environment:
+	•	Investigate further why the test suite fails to pass filtering parameters properly.
+	3.	Review Pagination Logic for Edge Cases:
+	•	Ensure that pagination logic handles both default and custom parameters consistently, and investigate any edge cases causing failures in the test suite.
+	4.	Resolve CRUD Operation Status Code Mismatches:
+	•	Adjust the status codes returned by the API to match the test suite’s expectations, particularly for create operations (expected 303 vs returned 201).
 
-Final Thoughts:
+Final Thoughts
 
-Although the API works well in manual tests, the automated testing environment exposes several issues related to schema validation, pagination, sorting, filtering, and CRUD operations. Moving forward, I’ll focus on aligning the API’s response structure and status codes with the test suite’s expectations, especially regarding how MongoDB handles IDs and pagination defaults.
+While the API works well in manual tests, the automated testing environment exposes several issues, particularly with how MongoDB IDs, pagination, and CRUD operations are handled. Moving forward, aligning the API responses and status codes with the test suite’s expectations, and addressing MongoDB ID formatting issues, should help resolve the remaining test failures.

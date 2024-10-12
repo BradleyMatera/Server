@@ -1,30 +1,24 @@
-// controllers/createContactController.js
-const ContactModel = require('../models/contactModel');
-const { validateContactData } = require('../utils/validation');
-const { DuplicateContactResourceError, InvalidContactSchemaError } = require('../utils/errors');
-const formatContact = require('../utils/formatContact');
+const mongoose = require('mongoose');
+const Contact = require('../models/contactModel');
 
 const createContact = async (req, res) => {
   try {
-    validateContactData(req.body);
+    console.log('Request received. Creating new contact...');
+    const { fname, lname, email, phone, birthday } = req.body;
 
-    const existingContact = await ContactModel.findOne({ email: req.body.email });
+    // Check if email already exists
+    const existingContact = await Contact.findOne({ email });
     if (existingContact) {
-      throw new DuplicateContactResourceError('A contact with this email already exists.');
+      return res.status(400).json({ error: 'A contact with this email already exists.' });
     }
 
-    const newContact = new ContactModel(req.body);
+    const newContact = new Contact({ fname, lname, email, phone, birthday });
     await newContact.save();
-    res.status(201).json(formatContact(newContact));
+    console.log('Successfully created a new contact.');
+    res.status(201).json(newContact); // Use status code 201 for successful creation
   } catch (error) {
-    if (
-      error instanceof InvalidContactSchemaError ||
-      error instanceof DuplicateContactResourceError
-    ) {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Error creating contact' });
-    }
+    console.error('Error creating contact:', error.message);
+    res.status(500).json({ error: 'Error creating contact' });
   }
 };
 
