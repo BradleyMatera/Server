@@ -1,5 +1,3 @@
-Here’s an updated version of the document using a detailed markdown structure:
-
 # **RESTful Routes Assignment - Detailed Analysis**
 
 ---
