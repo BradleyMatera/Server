@@ -1,59 +1,30 @@
-// customErrors.js
+// utils/errors.js
 
-// Invalid contact schema error
 class InvalidContactSchemaError extends Error {
-  constructor(message = 'The contact schema is invalid.') {
+  constructor(message) {
     super(message);
     this.name = 'InvalidContactSchemaError';
-    this.statusCode = 400; // Bad Request
   }
 }
 
-class InvalidContentTypeError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'InvalidContentTypeError';
-  }
-}
-
-// Contact not found error
-class ContactNotFoundError extends Error {
-  constructor(message = 'The requested contact was not found.') {
-    super(message);
-    this.name = 'ContactNotFoundError';
-    this.statusCode = 404; // Not Found
-  }
-}
-
-// Duplicate contact resource error
 class DuplicateContactResourceError extends Error {
-  constructor(message = 'A contact with the same details already exists.') {
+  constructor(message) {
     super(message);
     this.name = 'DuplicateContactResourceError';
-    this.statusCode = 409; // Conflict
+  }
+
+  static createErrorFromMongo(err) {
+    if (err.code === 11000) {
+      return new DuplicateContactResourceError('Duplicate email: a contact with this email already exists.');
+    }
+    return err;
   }
 }
 
-// Pagination result count error
-class PaginationResultCountError extends Error {
-  constructor(message = 'Pagination result count is invalid.') {
-    super(message);
-    this.name = "PaginationResultCountError";
-    this.statusCode = 500; // Internal Server Error
-  }
-}
-
-class ApiTestingError extends Error {
+class ServerUnreachableError extends Error {
   constructor(message) {
     super(message);
-    this.name = 'ApiTestingError';
-  }
-}
-
-class ResourceUnreachableError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'ResourceUnreachableError';
+    this.name = 'ServerUnreachableError';
   }
 }
 
@@ -80,12 +51,8 @@ class PaginationResultCountError extends Error {
 
 module.exports = {
   InvalidContactSchemaError,
-  ContactNotFoundError,
   DuplicateContactResourceError,
-  PaginationResultCountError,
-  InvalidContentTypeError,
-  ApiTestingError,
-  ResourceUnreachableError,
+  ServerUnreachableError,
   InvalidContentTypeError,
   ApiTestingError,
   PaginationResultCountError,

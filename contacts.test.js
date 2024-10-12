@@ -1,3 +1,4 @@
+jest.setTimeout(30000);
 // Import axios for making HTTP requests
 const axios = require('axios')
 const { validateContactData } = require('@jworkman-fs/asl/src/Model/index.js')

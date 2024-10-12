@@ -1,51 +1,39 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-const contactsRouter = require('./routes/contactsRouter'); // Ensure the correct path
+const contactsRouter = require('./routes/contactsRouter');
+const morgan = require('morgan');
+require('dotenv').config();
 
+// Create the Express app
 const app = express();
 
-// Enable CORS with specific allowed methods and headers
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Filter-By', 'X-Filter-Operator', 'X-Filter-Value']
-}));
+// Use morgan to log all requests
+app.use(morgan('dev'));
 
-// Middleware for JSON parsing
+// Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Route to handle contacts
+// Routes
 app.use('/v1/contacts', contactsRouter);
+app.get('/', (req, res) => {
+  res.send('Welcome to the Contact Book API');
+});
 
-// MongoDB connection setup
-mongoose.set('strictQuery', true);
-mongoose.connect('mongodb://mongodb:27017/contactbook', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-  connectTimeoutMS: 10000
-}).then(() => {
-  console.log('MongoDB connected successfully at 127.0.0.1:27017');
-}).catch((error) => {
-  console.error('MongoDB connection error:', error.message);
-  process.exit(1); // Exit process if MongoDB connection fails
+app.use((req, res) => {
+  res.status(404).send('Not Found');
 });
 
 // Start the server
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-// Global error handling
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled Rejection:', error.message);
-  process.exit(1);
-});
-
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error.message);
-  process.exit(1);
-});
+const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error.message);
+  });
