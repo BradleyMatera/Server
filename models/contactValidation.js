@@ -1,19 +1,16 @@
 // models/contactValidation.js
-const { InvalidContactSchemaError } = require('../utils/errors');
+const Joi = require('joi');
 
-// Validate contact data beyond the schema rules
-const validateContactData = (contactData) => {
-  const { fname, lname, email, phone, birthday } = contactData;
+const validateContact = (contact) => {
+  const schema = Joi.object({
+    fname: Joi.string().min(1).required(),
+    lname: Joi.string().min(1).required(),
+    email: Joi.string().email().required(),
+    phone: Joi.string().min(10).max(15).required(),
+    birthday: Joi.date().required(),
+  });
 
-  // Log the contact data being validated
-  console.log('Validating contact data:', contactData);
-
-  if (!fname || !lname || !email || !phone || !birthday) {
-    console.error('Validation failed: Missing required fields');
-    throw new InvalidContactSchemaError('All fields (fname, lname, email, phone, birthday) are required');
-  }
-
-  // Additional custom validation logic can be added here
+  return schema.validate(contact);
 };
 
-module.exports = { validateContactData };
+module.exports = { validateContact };

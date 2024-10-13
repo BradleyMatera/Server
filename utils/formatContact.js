@@ -1,11 +1,12 @@
 // utils/formatContact.js
-const formatContact = (contact) => ({
-  id: contact._id ? contact._id.toString() : '',  // Ensure _id is converted to id
-  fname: contact.fname || '',
-  lname: contact.lname || '',
-  email: contact.email || '',
-  phone: contact.phone || '',
-  birthday: contact.birthday ? contact.birthday.toISOString() : '',
-});
+const formatContact = (contact) => {
+  return {
+    fname: contact.fname.trim(),
+    lname: contact.lname.trim(),
+    email: contact.email.trim().toLowerCase(),
+    phone: contact.phone.trim(),
+    birthday: new Date(contact.birthday),
+  };
+};
 
-module.exports = formatContact;
+module.exports = { formatContact };

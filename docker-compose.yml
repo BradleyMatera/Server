@@ -1,16 +1,16 @@
-# docker-compose.yml
 version: '3'
 services:
-  contacts-api:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./db:/data/db
+  app:
     build: .
     ports:
       - "8080:8080"
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/contactbook
+      - MONGODB_URI=mongodb://mongo:27017/contactbook
     depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
+      - mongo

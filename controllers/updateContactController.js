@@ -1,23 +1,30 @@
 const Contact = require('../models/contactModel');
-const { validateContactData } = require('../utils/validationHelpers');
 
 const updateContact = async (req, res) => {
   const { id } = req.params;
-  const contactData = req.body;
+  const { fname, lname, email, phone, birthday } = req.body;
 
   try {
-    validateContactData(contactData);  // Validate the incoming data
+    console.log('Updating contact:', { fname, lname, email, phone, birthday });
 
-    const updatedContact = await Contact.findByIdAndUpdate(id, contactData, { new: true });
-
-    if (!updatedContact) {
-      return res.status(404).json({ error: `Contact with ID ${id} not found` });
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: 'Invalid contact ID' });
     }
 
-    res.json(updatedContact);
+    const updatedContact = await Contact.findByIdAndUpdate(
+      id,
+      { fname, lname, email, phone, birthday },
+      { new: true, runValidators: true } // Runs validators and returns updated contact
+    );
+
+    if (!updatedContact) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    res.status(200).json(updatedContact);
   } catch (error) {
-    console.error(`Error updating contact with ID ${id}:`, error.message);
-    res.status(500).json({ error: `Error updating contact with ID ${id}` });
+    console.error('Error updating contact:', error.message);
+    res.status(500).json({ message: 'Error updating contact', error: error.message });
   }
 };
 

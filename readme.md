@@ -146,3 +146,6 @@ Next Steps
 Final Thoughts
 
 While the API functions correctly in manual tests, several issues remain within the automated testing environment, particularly around MongoDB ID handling, pagination, and CRUD operations. Aligning the API’s responses and status codes with the test suite’s expectations and further investigating ID formatting issues should help resolve the remaining test failures.
+
+
+<div style="max-width: 640px"><div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;"><iframe src="https://fullsailedu-my.sharepoint.com/personal/bfmatera_student_fullsail_edu/_layouts/15/embed.aspx?UniqueId=0be873ea-3f4e-431b-af2f-5cce44a1f814&nav=%7B%22playbackOptions%22%3A%7B%22startTimeInSeconds%22%3A0%7D%7D&embed=%7B%22af%22%3Atrue%2C%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="640" height="360" frameborder="0" scrolling="no" allowfullscreen title="RESTful Routes Using ExpressJS.webm" style="border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;"></iframe></div></div>

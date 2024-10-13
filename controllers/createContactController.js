@@ -1,22 +1,32 @@
 const Contact = require('../models/contactModel');
-const { validateContactData } = require('../utils/validationHelpers');
 
 const createContact = async (req, res) => {
-  const contactData = req.body;
-
   try {
-    validateContactData(contactData);  // Custom validation function
+    const { fname, lname, email, phone, birthday } = req.body;
 
-    const newContact = new Contact(contactData);
+    // Check for missing fields
+    if (!fname || !lname || !email || !phone || !birthday) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Create and save the new contact
+    const newContact = new Contact({
+      fname,
+      lname,
+      email,
+      phone,
+      birthday: new Date(birthday)
+    });
+
     await newContact.save();
-
     res.status(201).json(newContact);
   } catch (error) {
-    console.error('Error creating contact:', error.message);
     if (error.code === 11000) {
-      return res.status(400).json({ error: 'A contact with this email already exists' });
+      // Duplicate key error
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({ message: `Duplicate key error: ${field} already exists.` });
     }
-    res.status(500).json({ error: 'Error creating contact' });
+    res.status(500).json({ message: "Error creating contact", error });
   }
 };
 

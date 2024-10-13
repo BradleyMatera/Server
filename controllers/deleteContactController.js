@@ -1,19 +1,24 @@
+const mongoose = require('mongoose');
 const Contact = require('../models/contactModel');
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid contact ID' });
+  }
+
   try {
     const deletedContact = await Contact.findByIdAndDelete(id);
 
     if (!deletedContact) {
-      return res.status(404).json({ error: `Contact with ID ${id} not found` });
+      return res.status(404).json({ message: 'Contact not found' });
     }
 
-    res.status(204).json();  // No content response
+    res.status(200).json({ message: 'Contact deleted successfully' });
   } catch (error) {
-    console.error(`Error deleting contact with ID ${id}:`, error.message);
-    res.status(500).json({ error: `Error deleting contact with ID ${id}` });
+    console.error('Error deleting contact:', error.message);
+    res.status(500).json({ message: 'Error deleting contact', error });
   }
 };
 

@@ -1,39 +1,44 @@
 // models/contactSchema.js
 const mongoose = require('mongoose');
 
-// Define the contact schema with validation and constraints
 const contactSchema = new mongoose.Schema({
   fname: {
     type: String,
-    required: [true, 'First name is required'],
-    minlength: [2, 'First name must be at least 2 characters long'],
+    required: true,
+    minlength: 2,
   },
   lname: {
     type: String,
-    required: [true, 'Last name is required'],
-    minlength: [2, 'Last name must be at least 2 characters long'],
+    required: true,
+    minlength: 2,
   },
   email: {
     type: String,
-    required: [true, 'Email is required'],
+    required: true,
     unique: true,
     match: [/\S+@\S+\.\S+/, 'Please provide a valid email address'],
   },
   phone: {
     type: String,
-    required: [true, 'Phone number is required'],
+    required: true,
     match: [/^\d{10}$/, 'Phone number must be 10 digits'],
   },
   birthday: {
     type: Date,
-    required: [true, 'Birthday is required'],
-    validate: {
-      validator: (v) => v instanceof Date && !isNaN(v),
-      message: 'Invalid date format for birthday',
-    },
-  },
+    required: true,
+  }
 }, { 
-  timestamps: true, // Automatically create `createdAt` and `updatedAt` fields
+  timestamps: true
 });
 
-module.exports = contactSchema;
+// Ensure that _id is transformed to id in the returned JSON
+contactSchema.set('toJSON', {
+  virtuals: true, // Include virtual fields
+  versionKey: false, // Remove __v
+  transform: (doc, ret) => {
+    ret.id = ret._id; // Map _id to id
+    delete ret._id; // Remove _id from the response
+  }
+});
+
+module.exports = mongoose.model('Contact', contactSchema);
