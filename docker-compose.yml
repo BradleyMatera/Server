@@ -1,16 +1,32 @@
-version: '3'
 services:
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
+  wdv442-mysql:
+    image: mysql:8.0
+    restart: always
+    networks:
+      - wdv442
     volumes:
-      - ./db:/data/db
-  app:
-    build: .
-    ports:
-      - "8080:8080"
+      - ./var:/var/lib/mysql
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/contactbook
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: asl
+      MYSQL_PASSWORD: asl
+      MYSQL_DATABASE: wdv442_space_tracker
+    command: --default-authentication-plugin=mysql_native_password
+
+  wdv442-node:
+    build: .  # Pointing to the Dockerfile we just created
+    networks:
+      - wdv442
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - "3000:3000"
+    restart: always
+    stdin_open: true
+    tty: true
     depends_on:
-      - mongo
+      - wdv442-mysql
+networks:
+  wdv442:
