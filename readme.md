@@ -1,197 +1,194 @@
-## 🌌 Star Tracker API - CRUD Operations Demo 🚀
+## 🌌 Star Tracker API 🚀
 
-This document demonstrates how to perform all CRUD (Create, Read, Update, Delete) operations for the Star Tracker API. The API contains three celestial resources: Galaxies, Planets, and Stars.
+	A comprehensive API to manage Galaxies, Planets, and Stars. This guide will walk you through the process of setting up the API, launching it via Docker, troubleshooting issues, and performing CRUD operations using cURL.
 
-🛠 Requirements:
+🛠 Prerequisites
 
-	•	Node.js and npm
-	•	Docker (if using a Docker setup)
-	•	cURL
+Before you begin, ensure you have the following installed:
 
-🚀 Running the API:
+	•	Node.js v18+ (use nvm for Node version management)
+	•	npm (Node Package Manager)
+	•	Docker (for running the containers)
+	•	cURL (for testing HTTP requests)
 
-Ensure your API is running locally. If you’re using Docker, run:
+Install Node.js using nvm:
+
+nvm install 18
+nvm use 18
+nvm alias default 18  # Set Node v18 as the default version
+
+Verify the Node.js version:
+
+node -v
+# Output should be: v18.x.x
+
+🚀 Setup and Launch Instructions
+
+1. Clone the Repository:
+
+git clone https://github.com/your-repo/star-tracker-api.git
+cd star-tracker-api
+
+2. Docker Compose Setup:
+
+To build and run the Docker containers:
 
 docker-compose up --build
 
-The API will be accessible at http://localhost:3000.
+This will create and start the containers for both Node.js and MySQL.
 
-🌌 CRUD Operations for Galaxies
+3. Accessing the Node.js Container:
 
-1. 🌟 Create a Galaxy (POST)
+To open a shell inside the running Node.js container:
+
+docker exec -it contactbookapi-wdv442-node-1 sh
+
+📜 Database Migrations
+
+Ensure the database schema is up-to-date by running:
+
+npx sequelize-cli db:migrate
+
+If the migration is successful, you’ll see an output like:
+
+== 20241015185445-create-stars-table: migrated (0.013s)
+
+🧑‍💻 API Testing with cURL
+
+🌌 Galaxies
+
+1. Create a Galaxy:
 
 curl -X POST http://localhost:3000/galaxies -H "Content-Type: application/json" -d '{
   "name": "Milky Way",
   "size": "Large"
 }'
 
-Response:
-
-{
-  "id": 1,
-  "name": "Milky Way",
-  "size": "Large",
-  "createdAt": "2024-10-15T20:00:00.000Z",
-  "updatedAt": "2024-10-15T20:00:00.000Z"
-}
-
-2. 🔭 Get All Galaxies (GET)
+2. Get All Galaxies:
 
 curl -X GET http://localhost:3000/galaxies
 
-Response:
-
-[
-  {
-    "id": 1,
-    "name": "Milky Way",
-    "size": "Large",
-    "createdAt": "2024-10-15T20:00:00.000Z",
-    "updatedAt": "2024-10-15T20:00:00.000Z"
-  }
-]
-
-3. ✏️ Update a Galaxy (PUT)
+3. Update a Galaxy:
 
 curl -X PUT http://localhost:3000/galaxies/1 -H "Content-Type: application/json" -d '{
   "name": "Andromeda",
   "size": "Massive"
 }'
 
-Response:
-
-{
-  "id": 1,
-  "name": "Andromeda",
-  "size": "Massive",
-  "createdAt": "2024-10-15T20:00:00.000Z",
-  "updatedAt": "2024-10-15T20:05:00.000Z"
-}
-
-4. 🗑️ Delete a Galaxy (DELETE)
+4. Delete a Galaxy:
 
 curl -X DELETE http://localhost:3000/galaxies/1
 
-Response:
+🪐 Planets
 
-true
-
-🪐 CRUD Operations for Planets
-
-1. 🌍 Create a Planet (POST)
+1. Create a Planet:
 
 curl -X POST http://localhost:3000/planets -H "Content-Type: application/json" -d '{
   "name": "Earth",
   "size": "Medium"
 }'
 
-Response:
-
-{
-  "id": 1,
-  "name": "Earth",
-  "size": "Medium",
-  "createdAt": "2024-10-15T20:00:00.000Z",
-  "updatedAt": "2024-10-15T20:00:00.000Z"
-}
-
-2. 🌍 Get All Planets (GET)
+2. Get All Planets:
 
 curl -X GET http://localhost:3000/planets
 
-Response:
-
-[
-  {
-    "id": 1,
-    "name": "Earth",
-    "size": "Medium",
-    "createdAt": "2024-10-15T20:00:00.000Z",
-    "updatedAt": "2024-10-15T20:00:00.000Z"
-  }
-]
-
-3. ✏️ Update a Planet (PUT)
+3. Update a Planet:
 
 curl -X PUT http://localhost:3000/planets/1 -H "Content-Type: application/json" -d '{
   "name": "Mars",
   "size": "Small"
 }'
 
-Response:
-
-{
-  "id": 1,
-  "name": "Mars",
-  "size": "Small",
-  "createdAt": "2024-10-15T20:00:00.000Z",
-  "updatedAt": "2024-10-15T20:05:00.000Z"
-}
-
-4. 🗑️ Delete a Planet (DELETE)
+4. Delete a Planet:
 
 curl -X DELETE http://localhost:3000/planets/1
 
-Response:
+☀️ Stars
 
-true
-
-🌟 CRUD Operations for Stars
-
-1. ☀️ Create a Star (POST)
+1. Create a Star:
 
 curl -X POST http://localhost:3000/stars -H "Content-Type: application/json" -d '{
   "name": "Sun",
   "size": "Large"
 }'
 
-Response:
-
-{
-  "id": 1,
-  "name": "Sun",
-  "size": "Large",
-  "createdAt": "2024-10-15T20:00:00.000Z",
-  "updatedAt": "2024-10-15T20:00:00.000Z"
-}
-
-2. ☀️ Get All Stars (GET)
+2. Get All Stars:
 
 curl -X GET http://localhost:3000/stars
 
-Response:
-
-[
-  {
-    "id": 1,
-    "name": "Sun",
-    "size": "Large",
-    "createdAt": "2024-10-15T20:00:00.000Z",
-    "updatedAt": "2024-10-15T20:00:00.000Z"
-  }
-]
-
-3. ✏️ Update a Star (PUT)
+3. Update a Star:
 
 curl -X PUT http://localhost:3000/stars/1 -H "Content-Type: application/json" -d '{
   "name": "Alpha Centauri",
-  "size": "Massive"
+  "size": "Large"
 }'
 
-Response:
-
-{
-  "id": 1,
-  "name": "Alpha Centauri",
-  "size": "Massive",
-  "createdAt": "2024-10-15T20:00:00.000Z",
-  "updatedAt": "2024-10-15T20:05:00.000Z"
-}
-
-4. 🗑️ Delete a Star (DELETE)
+4. Delete a Star:
 
 curl -X DELETE http://localhost:3000/stars/1
 
-Response:
+🔄 Rebuilding Docker Containers
 
-true
+If you’ve made changes or something isn’t working correctly, you may need to rebuild the Docker containers:
+
+docker-compose down
+docker-compose up --build
+
+This will stop, rebuild, and restart the containers.
+
+💥 Troubleshooting
+
+1. Node.js Version Issues:
+
+If you’re running into issues related to Node.js versions, ensure you’re using v18:
+
+nvm use 18
+
+2. MaxListenersExceededWarning:
+
+If you encounter a warning related to event listeners:
+
+require('events').EventEmitter.defaultMaxListeners = 15;
+
+3. Docker Not Working:
+
+	•	Check logs for any issues:
+
+docker logs contactbookapi-wdv442-node-1
+
+	•	Rebuild the containers if necessary:
+
+docker-compose down
+docker-compose up --build
+
+4. Sequelize Errors:
+
+If Sequelize throws errors about missing tables, try rerunning the migrations:
+
+npx sequelize-cli db:migrate
+
+📜 Additional Commands
+
+Check Running Containers:
+
+To check if your containers are running:
+
+docker ps
+
+Access MySQL Container:
+
+docker exec -it contactbookapi-wdv442-mysql-1 sh
+
+MySQL Shell:
+
+To interact with the database in MySQL, run this in the MySQL container:
+
+mysql -u root -p
+
+Enter the MySQL root password when prompted.
+
+🎯 Conclusion
+
+You’ve now set up and run the Star Tracker API, successfully performed CRUD operations using cURL, and learned how to troubleshoot common issues. Feel free to adjust this guide as your project evolves!
+
+Happy Coding! ✨

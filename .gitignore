@@ -16,5 +16,7 @@ public/uploads/planets/*
 node_modules
 
 # Docker storage
+var
 var/*
 !var/.gitkeep
+/var
