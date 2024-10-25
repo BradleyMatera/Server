@@ -1,0 +1,26 @@
+<!-- views/layout.twig -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Star Tracker{% endblock %}</title>
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Star Tracker</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/galaxies">Galaxies</a>
+      <a href="/stars">Stars</a>
+      <a href="/planets">Planets</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <p>&copy; {{ "now"|date("Y") }} Star Tracker</p>
+  </footer>
+</body>
+</html>

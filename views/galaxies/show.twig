@@ -1,0 +1,15 @@
+<!-- views/galaxies/show.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}{{ galaxy.name }} | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>{{ galaxy.name }}</h2>
+  <p>Size: {{ galaxy.size }}</p>
+  {% if galaxy.imagePath %}
+    <img src="{{ asset(galaxy.imagePath) }}" alt="{{ galaxy.name }}">
+  {% else %}
+    <p>No image available for this galaxy.</p>
+  {% endif %}
+  <a href="/galaxies/{{ galaxy.id }}/edit">Edit Galaxy</a>
+{% endblock %}

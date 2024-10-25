@@ -3,30 +3,41 @@ services:
     image: mysql:8.0
     restart: always
     networks:
-      - wdv442
+      - wdv442  # Reference the network here
     volumes:
-      - ./var:/var/lib/mysql
+      - db_data:/var/lib/mysql  # Use a Docker named volume
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: asl
       MYSQL_PASSWORD: asl
       MYSQL_DATABASE: wdv442_space_tracker
     command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
 
   wdv442-node:
-    build: .  # Pointing to the Dockerfile we just created
+    build: .
     networks:
-      - wdv442
+      - wdv442  # Reference the network here
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
+      DB_HOST: wdv442-mysql
+      DB_USER: asl
+      DB_PASSWORD: asl
+      DB_NAME: wdv442_space_tracker
     volumes:
       - ./:/home/node/app
+      - /home/node/app/node_modules  # Avoids overwriting node_modules
     ports:
-      - "3000:3000"
+      - "4000:3000"  # Maps container port 3000 to host port 4000
     restart: always
     stdin_open: true
     tty: true
     depends_on:
       - wdv442-mysql
+
+volumes:
+  db_data:  # Declare the named volume
+
 networks:
-  wdv442:
+  wdv442:  # Declare the network here

@@ -1,0 +1,23 @@
+<!-- views/galaxies/new.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Add New Galaxy | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Add New Galaxy</h2>
+  <form action="/galaxies" method="POST" enctype="multipart/form-data">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div>
+      <label for="size">Size:</label>
+      <input type="text" id="size" name="size">
+    </div>
+    <div>
+      <label for="image">Upload Image:</label>
+      <input type="file" id="image" name="image">
+    </div>
+    <button type="submit">Add Galaxy</button>
+  </form>
+{% endblock %}

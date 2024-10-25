@@ -1,67 +1,111 @@
-const { Star } = require('../models');
+// controllers/star.js
 
-// Show all resources
+const { Star } = require('../models');
+const path = require('path');
+
+// Show all stars
 const index = async (req, res) => {
   try {
     const stars = await Star.findAll();
-    res.status(200).json(stars);
+    res.render('stars/index', { stars });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).render('error', { error });
   }
 };
 
-// Show resource
+// Show form to create a new star
+const newStar = (req, res) => {
+  res.render('stars/new');
+};
+
+// Create a new star
+const create = async (req, res) => {
+  try {
+    const { name } = req.body;
+    let imagePath = null;
+
+    if (req.file) {
+      imagePath = `uploads/stars/${req.file.filename}`;
+    }
+
+    const star = await Star.create({ name, imagePath });
+    res.redirect(`/stars/${star.id}`);
+  } catch (error) {
+    res.status(500).render('error', { error });
+  }
+};
+
+// Show a single star
 const show = async (req, res) => {
   try {
     const star = await Star.findByPk(req.params.id);
     if (star) {
-      res.status(200).json(star);
+      res.render('stars/show', { star });
     } else {
-      res.status(404).json({ error: 'Star not found' });
+      res.status(404).render('error', { error: 'Star not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).render('error', { error });
   }
 };
 
-// Create a new resource
-const create = async (req, res) => {
+// Show form to edit a star
+const edit = async (req, res) => {
   try {
-    const star = await Star.create(req.body);
-    res.status(201).json(star);
+    const star = await Star.findByPk(req.params.id);
+    if (star) {
+      res.render('stars/edit', { star });
+    } else {
+      res.status(404).render('error', { error: 'Star not found' });
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).render('error', { error });
   }
 };
 
-// Update an existing resource
+// Update a star
 const update = async (req, res) => {
   try {
     const star = await Star.findByPk(req.params.id);
     if (star) {
-      await star.update(req.body);
-      res.status(200).json(star);
+      const { name } = req.body;
+      let imagePath = star.imagePath;
+
+      if (req.file) {
+        imagePath = `uploads/stars/${req.file.filename}`;
+      }
+
+      await star.update({ name, imagePath });
+      res.redirect(`/stars/${star.id}`);
     } else {
-      res.status(404).json({ error: 'Star not found' });
+      res.status(404).render('error', { error: 'Star not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).render('error', { error });
   }
 };
 
-// Remove a single resource
+// Delete a star
 const remove = async (req, res) => {
   try {
     const star = await Star.findByPk(req.params.id);
     if (star) {
       await star.destroy();
-      res.status(204).json(true);
+      res.redirect('/stars');
     } else {
-      res.status(404).json({ error: 'Star not found' });
+      res.status(404).render('error', { error: 'Star not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).render('error', { error });
   }
 };
 
-module.exports = { index, show, create, update, remove };
+module.exports = {
+  index,
+  new: newStar,
+  create,
+  show,
+  edit,
+  update,
+  remove,
+};

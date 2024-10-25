@@ -1,18 +1,17 @@
-// Load in Express framework
-const express = require(`express`)
+// routers/star.js
 
-// Load in our controller/action instances
-const starCtlr = require(`../controllers/star.js`)
+const express = require('express');
+const starCtlr = require('../controllers/star');
+const upload = require('../middlewares/upload');
 
-// Create a new Router instance and call it "router"
-const router = new express.Router()
+const router = express.Router();
 
-// RESTful resource mappings
-router.get(`/`, starCtlr.index)
-router.post(`/`, starCtlr.create)
-router.get(`/:id`, starCtlr.show) 
-router.put(`/:id`, starCtlr.update) 
-router.delete(`/:id`, starCtlr.remove) 
+router.get('/', starCtlr.index);
+router.get('/new', starCtlr.new);
+router.post('/', upload('stars').single('image'), starCtlr.create);
+router.get('/:id', starCtlr.show);
+router.get('/:id/edit', starCtlr.edit);
+router.put('/:id', upload('stars').single('image'), starCtlr.update);
+router.delete('/:id', starCtlr.remove);
 
-// export "router"
-module.exports = router
+module.exports = router;

@@ -1,0 +1,23 @@
+<!-- views/stars/new.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Add New Star | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Add New Star</h2>
+  <form action="/stars" method="POST" enctype="multipart/form-data">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div>
+      <label for="size">Size:</label>
+      <input type="text" id="size" name="size">
+    </div>
+    <div>
+      <label for="image">Upload Image:</label>
+      <input type="file" id="image" name="image">
+    </div>
+    <button type="submit">Add Star</button>
+  </form>
+{% endblock %}

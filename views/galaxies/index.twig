@@ -1,0 +1,16 @@
+<!-- views/galaxies/index.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Galaxies | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Galaxies</h2>
+  <ul>
+    {% for galaxy in galaxies %}
+      <li><a href="/galaxies/{{ galaxy.id }}">{{ galaxy.name }}</a></li>
+    {% else %}
+      <p>No galaxies found.</p>
+    {% endfor %}
+  </ul>
+  <a href="/galaxies/new">Add New Galaxy</a>
+{% endblock %}

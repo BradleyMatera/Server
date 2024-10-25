@@ -1,18 +1,17 @@
-// Load in Express framework
-const express = require(`express`)
+// routers/galaxy.js
 
-// Load in our controller/action instances
-const galaxyCtlr = require(`../controllers/galaxy.js`)
+const express = require('express');
+const galaxyCtlr = require('../controllers/galaxy');
+const upload = require('../middlewares/upload');
 
-// Create a new Router instance and call it "router"
-const router = new express.Router()
+const router = express.Router();
 
-// RESTful resource mappings
-router.get(`/`, galaxyCtlr.index)
-router.post(`/`, galaxyCtlr.create)
-router.get(`/:id`, galaxyCtlr.show) 
-router.put(`/:id`, galaxyCtlr.update) 
-router.delete(`/:id`, galaxyCtlr.remove) 
+router.get('/', galaxyCtlr.index);
+router.get('/new', galaxyCtlr.new);
+router.post('/', upload('galaxies').single('image'), galaxyCtlr.create);
+router.get('/:id', galaxyCtlr.show);
+router.get('/:id/edit', galaxyCtlr.edit);
+router.put('/:id', upload('galaxies').single('image'), galaxyCtlr.update);
+router.delete('/:id', galaxyCtlr.remove);
 
-// export "router"
-module.exports = router
+module.exports = router;

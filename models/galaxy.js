@@ -1,4 +1,4 @@
-'use strict';
+// models/galaxy.js
 
 module.exports = (sequelize, DataTypes) => {
   const Galaxy = sequelize.define('Galaxy', {
@@ -8,6 +8,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     size: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    imagePath: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 

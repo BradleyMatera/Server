@@ -1,4 +1,4 @@
-'use strict';
+// models/star.js
 
 module.exports = (sequelize, DataTypes) => {
   const Star = sequelize.define('Star', {
@@ -8,6 +8,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     size: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    imagePath: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 

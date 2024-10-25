@@ -1,0 +1,23 @@
+<!-- views/planets/edit.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Edit {{ planet.name }} | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Edit Planet</h2>
+  <form action="/planets/{{ planet.id }}?_method=PUT" method="POST" enctype="multipart/form-data">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" value="{{ planet.name }}" required>
+    </div>
+    <div>
+      <label for="size">Size:</label>
+      <input type="text" id="size" name="size" value="{{ planet.size }}">
+    </div>
+    <div>
+      <label for="image">Upload New Image:</label>
+      <input type="file" id="image" name="image">
+    </div>
+    <button type="submit">Update Planet</button>
+  </form>
+{% endblock %}

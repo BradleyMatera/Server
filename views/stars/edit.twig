@@ -1,0 +1,23 @@
+<!-- views/stars/edit.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Edit {{ star.name }} | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Edit Star</h2>
+  <form action="/stars/{{ star.id }}?_method=PUT" method="POST" enctype="multipart/form-data">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" value="{{ star.name }}" required>
+    </div>
+    <div>
+      <label for="size">Size:</label>
+      <input type="text" id="size" name="size" value="{{ star.size }}">
+    </div>
+    <div>
+      <label for="image">Upload New Image:</label>
+      <input type="file" id="image" name="image">
+    </div>
+    <button type="submit">Update Star</button>
+  </form>
+{% endblock %}

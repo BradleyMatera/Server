@@ -1,29 +1,23 @@
-# Use the official Node.js image as the base
-FROM node:latest
+# Use the official Node.js LTS image
+FROM node:14
 
-# Switch to root to install MySQL client
-USER root
-
-# Install default MySQL client
+# Install MySQL Client
 RUN apt-get update && apt-get install -y default-mysql-client
 
-# Set the working directory inside the container
+# Create and set the working directory
 WORKDIR /home/node/app
 
-# Ensure node user owns the app directory
-RUN chown -R node:node /home/node/app
-
-# Copy package.json and package-lock.json before running npm install as root
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Run npm install as root to avoid permission issues
+# Install dependencies
 RUN npm install
 
-# Switch to node user after installation
-USER node
-
-# Copy all files to the working directory
+# Copy the rest of the application code
 COPY . .
 
-# Set the command to start the app
+# Expose port 3000
+EXPOSE 3000
+
+# Start the application
 CMD ["npm", "run", "watch"]

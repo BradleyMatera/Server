@@ -1,0 +1,16 @@
+<!-- views/planets/index.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Planets | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Planets</h2>
+  <ul>
+    {% for planet in planets %}
+      <li><a href="/planets/{{ planet.id }}">{{ planet.name }}</a></li>
+    {% else %}
+      <p>No planets found.</p>
+    {% endfor %}
+  </ul>
+  <a href="/planets/new">Add New Planet</a>
+{% endblock %}

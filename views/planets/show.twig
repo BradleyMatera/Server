@@ -1,0 +1,15 @@
+<!-- views/planets/show.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}{{ planet.name }} | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>{{ planet.name }}</h2>
+  <p>Size: {{ planet.size }}</p>
+  {% if planet.imagePath %}
+    <img src="{{ asset(planet.imagePath) }}" alt="{{ planet.name }}">
+  {% else %}
+    <p>No image available for this planet.</p>
+  {% endif %}
+  <a href="/planets/{{ planet.id }}/edit">Edit Planet</a>
+{% endblock %}

@@ -1,0 +1,16 @@
+<!-- views/stars/index.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}Stars | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>Stars</h2>
+  <ul>
+    {% for star in stars %}
+      <li><a href="/stars/{{ star.id }}">{{ star.name }}</a></li>
+    {% else %}
+      <p>No stars found.</p>
+    {% endfor %}
+  </ul>
+  <a href="/stars/new">Add New Star</a>
+{% endblock %}

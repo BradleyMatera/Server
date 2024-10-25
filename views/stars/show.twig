@@ -1,0 +1,15 @@
+<!-- views/stars/show.twig -->
+{% extends "layout.twig" %}
+
+{% block title %}{{ star.name }} | Star Tracker{% endblock %}
+
+{% block content %}
+  <h2>{{ star.name }}</h2>
+  <p>Size: {{ star.size }}</p>
+  {% if star.imagePath %}
+    <img src="{{ asset(star.imagePath) }}" alt="{{ star.name }}">
+  {% else %}
+    <p>No image available for this star.</p>
+  {% endif %}
+  <a href="/stars/{{ star.id }}/edit">Edit Star</a>
+{% endblock %}

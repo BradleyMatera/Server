@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = (sequelize, DataTypes) => {
   const Planet = sequelize.define('Planet', {
     name: {
@@ -8,6 +6,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     size: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    imagePath: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 
