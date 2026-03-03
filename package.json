@@ -12,16 +12,13 @@
   "dependencies": {
     "@jworkman-fs/asl": "^1.2.43",
     "axios": "^1.7.7",
-    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "curl": "^0.1.4",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "joi": "^17.13.3",
     "mongoose": "^6.13.3",
     "mongoose-paginate-v2": "^1.8.5",
-    "morgan": "^1.10.0",
-    "node-libcurl": "^4.0.0"
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "jest": "^28.1.3",

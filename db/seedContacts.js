@@ -4,7 +4,7 @@ const Contact = require('../models/contactModel');
 const seedData = require('./seedData.json');
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
     return Contact.deleteMany({});
